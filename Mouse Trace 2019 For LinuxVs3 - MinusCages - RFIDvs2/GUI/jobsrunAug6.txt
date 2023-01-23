@@ -1,0 +1,7 @@
+JOBID   USER    STAT  QUEUE      FROM_HOST   EXEC_HOST   JOB_NAME   SUBMIT_TIME
+700346  cfsilvi RUN   new-long   access.wexa cn290.wexac *5.2014')" Aug  6 08:53
+700347  cfsilvi RUN   new-long   access.wexa cn284.wexac *5.2014')" Aug  6 08:56
+700414  cfsilvi RUN   new-long   access.wexa cn128.wexac *5.2014')" Aug  6 08:57
+700415  cfsilvi RUN   new-long   access.wexa cn157.wexac *5.2014')" Aug  6 08:58
+700416  cfsilvi RUN   new-long   access.wexa cn125.wexac *5.2014')" Aug  6 08:58
+700417  cfsilvi RUN   new-long   access.wexa cn630.wexac *5.2014')" Aug  6 08:59

@@ -1,0 +1,317 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ManagerFindCoordinates</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-30"><meta name="DC.source" content="ManagerFindCoordinates.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">%% Read initial parameter</a></li><li><a href="#6">-Thesholding the image</a></li><li><a href="#7">-----------------------Remove small structures less than 300 pixels area related with the borders------------</a></li><li><a href="#9">Find mice together</a></li><li><a href="#13">-------Remove centroids that are on the contour of the arena and receive new centroids--------------------</a></li><li><a href="#14">Save the results</a></li><li><a href="#15">By including repeated coordinates in the list</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span>  [CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,Frame]=ManagerFindCoordinates(Frame,InitialFrame,PixelsArenaContour,CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,count)
+</pre><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">% This function retreives the coordinates of each mouse for a given</span>
+<span class="comment">% including the marking inside the frame</span>
+
+
+
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">% %% Initialize variables</span>
+<span class="comment">% Coordinates=[];</span>
+<span class="comment">% NumberOfFrame=[];</span>
+<span class="comment">% CoordinatesR=[];</span>
+<span class="comment">% NumberOfFrameR=[];</span>
+
+<span class="comment">% t=1;</span>
+
+ centroids=[];
+ centroidsR=[];
+</pre><h2>%% Read initial parameter<a name="3"></a></h2><pre class="codeinput">Initial_Parameters=Parameters();
+</pre><pre class="codeinput">Frame=rgb2gray(Frame);<span class="comment">%convert to gray scale from rgb</span>
+
+Frame=mat2gray(Frame); <span class="comment">%normalize between 0 to 1</span>
+FrameObs=Frame;
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in ManagerFindCoordinates (line 25)
+Frame=rgb2gray(Frame);%convert to gray scale from rgb 
+</pre><pre class="codeinput">DifImage=imabsdiff(Frame,InitialFrame); <span class="comment">%Find the mice which are different from the background</span>
+</pre><h2>-Thesholding the image<a name="6"></a></h2><pre class="codeinput">[centroids,s,BinaryImage,level]=Thresholding(DifImage);
+</pre><h2>-----------------------Remove small structures less than 300 pixels area related with the borders------------<a name="7"></a></h2><pre class="codeinput">AreaToFilter=Initial_Parameters.AreaToFilter; <span class="comment">%Default is 290</span>
+MajorAxis=Initial_Parameters.MajorAxis; <span class="comment">%Default is 40</span>
+[s,centroids,BinaryImage]=RemoveCorners(s,centroids,BinaryImage,AreaToFilter,MajorAxis);
+
+centroidsR=centroids;
+</pre><pre class="codeinput"> <span class="comment">%%%%%%%%%%%%%%</span>
+ <span class="comment">%%----------CONSIDER THE CASES IN WHICH 2 OR 3 MICE ARE TOGETHER AND THERE AREN'T SEPARATION BETWEEN THEM---------------</span>
+LimitArea1To2= Initial_Parameters.LimitArea1To2; <span class="comment">% Default is 700 pixels units</span>
+LimitArea2To3=Initial_Parameters.LimitArea2To3; <span class="comment">%Default is 1150 pixels units</span>
+erodePixels=Initial_Parameters.erodePixels;  <span class="comment">%Default is 6</span>
+erodeAreasToRemove=Initial_Parameters.erodeAreasToRemove; <span class="comment">%Default is 10</span>
+</pre><h2>Find mice together<a name="9"></a></h2><pre class="codeinput"> Index2M=[];
+ Index3M=[];
+
+ Index2M=find([s.Area]&gt;LimitArea1To2 &amp; [s.Area]&lt;LimitArea2To3 );
+ Index3M=find([s.Area]&gt;LimitArea2To3 );
+</pre><pre class="codeinput"> <span class="keyword">if</span> ~isempty(Index2M) <span class="comment">%consider 2 mice together</span>
+     cluster=2;
+   [centroidsCorrect2M,CentroidsCorrectedRepeats2M] =ManagerSegmentation(BinaryImage,[s.Area],Index2M,erodePixels,erodeAreasToRemove,length(Index2M),cluster);
+   centroids(Index2M,:)=[];
+   centroids=[centroids; centroidsCorrect2M];
+
+   centroidsR(Index2M,:)=[];
+   centroidsR=[centroidsR; CentroidsCorrectedRepeats2M];
+ <span class="keyword">end</span>
+</pre><pre class="codeinput"> <span class="keyword">if</span> ~isempty(Index3M) <span class="comment">%consider 3 mice together</span>
+     cluster=3;
+   [centroidsCorrect3M,CentroidsCorrectedRepeats3M] =ManagerSegmentation(BinaryImage,[s.Area],Index3M,erodePixels,erodeAreasToRemove,length(Index3M),cluster);
+   centroids(Index3M,:)=[];
+   centroids=[centroids; centroidsCorrect3M];
+
+   centroidsR(Index3M,:)=[];
+   centroidsR=[centroidsR; CentroidsCorrectedRepeats3M];
+ <span class="keyword">end</span>
+</pre><h2>-------Remove centroids that are on the contour of the arena and receive new centroids--------------------<a name="13"></a></h2><pre class="codeinput"> centroids=RemoveCentroidsOnContour(centroids,PixelsArenaContour);
+ centroidsR=RemoveCentroidsOnContour(centroidsR,PixelsArenaContour);
+</pre><h2>Save the results<a name="14"></a></h2><pre class="codeinput">Coordinates=[Coordinates ; centroids];
+
+
+NumberOfFrame=[NumberOfFrame; repmat(count,size(centroids,1),1)];
+
+<span class="comment">% SegmentationData=[NumberOfFrame,Coordinates];</span>
+</pre><h2>By including repeated coordinates in the list<a name="15"></a></h2><pre class="codeinput">CoordinatesR=[CoordinatesR ; centroidsR];
+
+NumberOfFrameR=[NumberOfFrameR; repmat(count,size(centroidsR,1),1)];
+
+<span class="comment">% SegmentationDataR=[NumberOfFrameR,CoordinatesR];</span>
+</pre><p>%draw in the pictures the positions</p><pre class="codeinput">position=[centroids,repmat(3,size(centroids,1),1)];
+Frame=insertShape(Frame,<span class="string">'circle'</span>,position,<span class="string">'LineWidth'</span>, 2);
+ <span class="comment">%imshowpair(Frame,BinaryImage,'montage')</span>
+
+<span class="comment">%Create movie</span>
+<span class="comment">%</span>
+<span class="comment">%  mov(t)=im2frame(Frame);</span>
+<span class="comment">%</span>
+<span class="comment">% t=t+1;</span>
+
+
+
+<span class="comment">% %save data</span>
+<span class="comment">% save(strcat(DirectoryToSave,'coordinates.mat'),'SegmentationData');</span>
+<span class="comment">% save(strcat(DirectoryToSave,'coordinatesR.mat'),'SegmentationDataR');</span>
+<span class="comment">%</span>
+<span class="comment">% %% ------------------------Save video------------------</span>
+<span class="comment">% w=cd;  %current directory</span>
+<span class="comment">% v1 = VideoWriter(strcat(DirectoryToSave,'temp.avi'));</span>
+<span class="comment">% v1.FrameRate=12.8;</span>
+<span class="comment">% open(v1)</span>
+<span class="comment">% writeVideo(v1,mov)</span>
+<span class="comment">% %</span>
+<span class="comment">% close(v1)</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function  [CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,Frame]=ManagerFindCoordinates(Frame,InitialFrame,PixelsArenaContour,CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,count)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This function retreives the coordinates of each mouse for a given
+% including the marking inside the frame
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %% Initialize variables
+% Coordinates=[];
+% NumberOfFrame=[];
+% CoordinatesR=[];
+% NumberOfFrameR=[]; 
+
+% t=1;
+
+ centroids=[];
+ centroidsR=[];   
+ %% %% Read initial parameter
+Initial_Parameters=Parameters();
+ 
+    %% 
+    
+Frame=rgb2gray(Frame);%convert to gray scale from rgb 
+
+Frame=mat2gray(Frame); %normalize between 0 to 1
+FrameObs=Frame;
+%% 
+DifImage=imabsdiff(Frame,InitialFrame); %Find the mice which are different from the background
+
+
+%% -Thesholding the image
+[centroids,s,BinaryImage,level]=Thresholding(DifImage);
+
+
+ 
+ %% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Remove small structures less than 300 pixels area related with the bordersREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+AreaToFilter=Initial_Parameters.AreaToFilter; %Default is 290
+MajorAxis=Initial_Parameters.MajorAxis; %Default is 40
+[s,centroids,BinaryImage]=RemoveCorners(s,centroids,BinaryImage,AreaToFilter,MajorAxis);
+ 
+centroidsR=centroids;
+ 
+ 
+ %%
+ %%%%%%%%%%%%%% 
+ %%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHCONSIDER THE CASES IN WHICH 2 OR 3 MICE ARE TOGETHER AND THERE AREN'T SEPARATION BETWEEN THEMREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+LimitArea1To2= Initial_Parameters.LimitArea1To2; % Default is 700 pixels units
+LimitArea2To3=Initial_Parameters.LimitArea2To3; %Default is 1150 pixels units
+erodePixels=Initial_Parameters.erodePixels;  %Default is 6
+erodeAreasToRemove=Initial_Parameters.erodeAreasToRemove; %Default is 10
+
+%% Find mice together
+ Index2M=[];
+ Index3M=[];
+ 
+ Index2M=find([s.Area]>LimitArea1To2 & [s.Area]<LimitArea2To3 );
+ Index3M=find([s.Area]>LimitArea2To3 );
+ 
+ %% 
+     
+ if ~isempty(Index2M) %consider 2 mice together
+     cluster=2;
+   [centroidsCorrect2M,CentroidsCorrectedRepeats2M] =ManagerSegmentation(BinaryImage,[s.Area],Index2M,erodePixels,erodeAreasToRemove,length(Index2M),cluster);
+   centroids(Index2M,:)=[];
+   centroids=[centroids; centroidsCorrect2M];
+   
+   centroidsR(Index2M,:)=[];
+   centroidsR=[centroidsR; CentroidsCorrectedRepeats2M];
+ end   
+     
+ %% 
+     
+ if ~isempty(Index3M) %consider 3 mice together
+     cluster=3;
+   [centroidsCorrect3M,CentroidsCorrectedRepeats3M] =ManagerSegmentation(BinaryImage,[s.Area],Index3M,erodePixels,erodeAreasToRemove,length(Index3M),cluster);
+   centroids(Index3M,:)=[];
+   centroids=[centroids; centroidsCorrect3M];
+   
+   centroidsR(Index3M,:)=[];
+   centroidsR=[centroidsR; CentroidsCorrectedRepeats3M];
+ end   
+ %% 
+ 
+ 
+ 
+
+ %% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Remove centroids that are on the contour of the arena and receive new centroidsREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+ centroids=RemoveCentroidsOnContour(centroids,PixelsArenaContour);
+ centroidsR=RemoveCentroidsOnContour(centroidsR,PixelsArenaContour);
+%% Save the results
+Coordinates=[Coordinates ; centroids];
+
+
+NumberOfFrame=[NumberOfFrame; repmat(count,size(centroids,1),1)];
+
+% SegmentationData=[NumberOfFrame,Coordinates];
+%% By including repeated coordinates in the list
+
+CoordinatesR=[CoordinatesR ; centroidsR];
+
+NumberOfFrameR=[NumberOfFrameR; repmat(count,size(centroidsR,1),1)];
+
+% SegmentationDataR=[NumberOfFrameR,CoordinatesR];
+
+
+
+
+
+
+
+
+%% 
+% %draw in the pictures the positions
+
+position=[centroids,repmat(3,size(centroids,1),1)];   
+Frame=insertShape(Frame,'circle',position,'LineWidth', 2);
+ %imshowpair(Frame,BinaryImage,'montage')
+
+%Create movie
+% 
+%  mov(t)=im2frame(Frame);
+% 
+% t=t+1;
+
+
+
+% %save data
+% save(strcat(DirectoryToSave,'coordinates.mat'),'SegmentationData');
+% save(strcat(DirectoryToSave,'coordinatesR.mat'),'SegmentationDataR');
+% 
+% %% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHSave videoREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% w=cd;  %current directory
+% v1 = VideoWriter(strcat(DirectoryToSave,'temp.avi'));
+% v1.FrameRate=12.8;
+% open(v1)
+% writeVideo(v1,mov)
+% % 
+% close(v1)
+
+end
+
+##### SOURCE END #####
+--></body></html>

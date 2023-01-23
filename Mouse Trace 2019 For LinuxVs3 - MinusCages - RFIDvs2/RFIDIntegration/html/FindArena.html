@@ -1,0 +1,377 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>FindArena</title><meta name="generator" content="MATLAB 9.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-04-23"><meta name="DC.source" content="FindArena.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Variables</a></li><li><a href="#4">------- Select the antenna inside the arena which are unique and duplicate duplicate-----------------</a></li><li><a href="#5">----------------------------Consider First Frame -----------------------</a></li><li><a href="#6">For count frames different from the first one also we take into acount the  last frame</a></li><li><a href="#7">--------------------------Add a final vector of velocity for final control--------------------</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> [XAssignment,YAssignment, XAssignmentPixel,YAssignmentPixel,IindicateNoSureCoord,OrientationAssignment,velocityFinal]=FindArena(IndexArena,AntennaNumber,AntennaCoord,DeltaTimeRFID,countFrames,<span class="keyword">...</span><span class="comment">.</span>
+</pre><pre class="codeinput">                   xposPixel,yposPixel,xpos,ypos,MaxRFIDDistance,DeltaFrame,<span class="keyword">...</span><span class="comment">...</span>
+                   Orientation,OrientationLastFrame,XPixelLastFrame,YPixelLastFrame,XLastFrame,YLastFrame,<span class="keyword">...</span>
+                   TimeExp,VelocityThreshold,VelLastFrame, NoSureSignalLastFrame,FactorAcceleration)
+<span class="comment">%This function find the coordinates of the mouse in the arena a vector</span>
+</pre><h2 id="3">Variables</h2><pre class="codeinput"> DistanceAssignment=[];
+  XAssignment=[];
+  YAssignment=[];
+  XAssignmentPixel=[];
+  YAssignmentPixel=[];
+  OrientationAssignment=[];
+</pre><h2 id="4">------- Select the antenna inside the arena which are unique and duplicate duplicate-----------------</h2><pre class="codeinput">SubsetAntennaNumber=AntennaNumber(IndexArena,1);
+SubsetDeltaTimeRFID=DeltaTimeRFID(IndexArena,1);
+<span class="comment">% Get the antenna which are and aren't unique.</span>
+[~,ind]=unique(SubsetAntennaNumber,<span class="string">'stable'</span>);
+SubsetAntennaNumberDuplicate=SubsetAntennaNumber(setdiff(1:size(SubsetAntennaNumber,1),ind));<span class="comment">%This gives the antenna number which are duplicated</span>
+SubsetAntennaNumberDuplicate=unique(SubsetAntennaNumberDuplicate); <span class="comment">%This gives only one number for each duplicate</span>
+[SubsetAntennaNumberUnique,id]=setdiff(SubsetAntennaNumber,SubsetAntennaNumberDuplicate,<span class="string">'stable'</span>); <span class="comment">%This gives the antenna number which are unique</span>
+Iindicate_uniqueAntenna=zeros(size(SubsetAntennaNumber,1),1);
+Iindicate_uniqueAntenna(id,1)=1;
+<span class="comment">%find the antenna coordinate</span>
+ AntennaX=AntennaCoord(SubsetAntennaNumber,1);
+ AntennaY=AntennaCoord(SubsetAntennaNumber,2);
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><pre class="codeoutput error">Not enough input arguments.
+
+Error in FindArena (line 15)
+SubsetAntennaNumber=AntennaNumber(IndexArena,1);
+</pre><h2 id="5">----------------------------Consider First Frame -----------------------</h2><p>Calculate the distance from each possible postion to a given antenna.</p><pre class="codeinput"><span class="comment">%if the distance less than and delta time less than the result is certain</span>
+<span class="comment">%and 0 and antenna es unique if not is 1.</span>
+<span class="comment">%Create a report matrix</span>
+
+   <span class="comment">% %%%%%%%%%%%%%%%%Arrange distance from antenna into a matrix%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+   [MatrixToMinimize,DistanceMatrix,DeltaRFIDaux]=Matrix_to_Consider_RFID(xpos,ypos,AntennaX,AntennaY,<span class="keyword">...</span><span class="comment">..</span>
+                                                    SubsetDeltaTimeRFID,MaxRFIDDistance,DeltaFrame,Orientation);
+   <span class="comment">% %%%%%%%%%%%%%%Assign to each antenna the minimum distance in such a way that the sum</span>
+        <span class="comment">%is minimum and each antenna receive a different assignment,application</span>
+        <span class="comment">%of hungariam algoritm%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+    [assignmentF,~]=munkresForMiceTracer(MatrixToMinimize);
+    <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%Do the assignment according to minimal value%%%%%%%%%%%%%%%%%%%%%%%%</span>
+     <span class="keyword">for</span> countAssigment=1:length(assignmentF)
+        DistanceAssignment(countAssigment)=DistanceMatrix(assignmentF(countAssigment),countAssigment);
+        XAssignment(countAssigment)=xpos(assignmentF(countAssigment));
+        YAssignment(countAssigment)=ypos(assignmentF(countAssigment));
+        XAssignmentPixel(countAssigment)=xposPixel(assignmentF(countAssigment));
+        YAssignmentPixel(countAssigment)=yposPixel(assignmentF(countAssigment));
+        OrientationAssignment(countAssigment)=Orientation(assignmentF(countAssigment));
+     <span class="keyword">end</span>
+   <span class="comment">% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Create a vector to know the cetainty of the data%%%%%%%%%%%%%%%%%%%%</span>
+    Ilogical=(DistanceAssignment'&lt;MaxRFIDDistance)&amp; ((DeltaRFIDaux(1,:))'&lt;DeltaFrame)&amp; Iindicate_uniqueAntenna ;
+    IindicateNoSureCoord=~Ilogical; <span class="comment">%1 value indicate that the value isn't sure</span>
+    IindicateNoSureCoord=IindicateNoSureCoord';
+    <span class="comment">% %%%%%%%%%%%%%%%%%%%%Do a Second control for count frames&gt;1%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+    <span class="keyword">if</span> countFrames~=1
+      <span class="comment">% Find last coord. and orientation inside the arena</span>
+                XPixelLastFrame=XPixelLastFrame(IndexArena);
+                YPixelLastFrame=YPixelLastFrame(IndexArena);
+                XLastFrame=XLastFrame(IndexArena);
+                YLastFrame=YLastFrame(IndexArena);
+                OrientationLastFrame=OrientationLastFrame(IndexArena);
+                VelLastFrame= VelLastFrame(IndexArena);
+                NoSureSignalLastFrame=NoSureSignalLastFrame(IndexArena);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Checking the validity of positions which were considered sure%%%%%%%%%%%%%%%%%%%%%%</span>
+ <span class="keyword">if</span> countFrames&gt;1
+        <span class="keyword">if</span> ~isempty(find(IindicateNoSureCoord==0)) <span class="comment">% this is done only with sure candidates  coordinates</span>
+          IindicateNoSureCoord=CheckingValidity(countFrames,find(IindicateNoSureCoord==0),XAssignment(find(IindicateNoSureCoord==0)),YAssignment(find(IindicateNoSureCoord==0)),<span class="keyword">...</span><span class="comment">..</span>
+                      XLastFrame(find(IindicateNoSureCoord==0)),YLastFrame(find(IindicateNoSureCoord==0)),<span class="keyword">...</span>
+                      TimeExp{countFrames-1},TimeExp{countFrames},NoSureSignalLastFrame,<span class="keyword">...</span><span class="comment">.</span>
+                      VelocityThreshold,IindicateNoSureCoord,VelLastFrame,FactorAcceleration);
+        <span class="keyword">end</span>
+     <span class="comment">% For further use get the index of the right places</span>
+     IndexRightWithRFID=find(IindicateNoSureCoord==0);
+ <span class="keyword">end</span>
+    <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2 id="6">For count frames different from the first one also we take into acount the  last frame</h2><pre class="codeinput">    <span class="keyword">if</span> countFrames~=1 &amp; any(IindicateNoSureCoord)
+    <span class="comment">% Group only the positions and antennas which were not defined with</span>
+    <span class="comment">% RFID</span>
+          IsubAfterRFID=find(IindicateNoSureCoord==1);
+          <span class="keyword">if</span> ~isempty(IsubAfterRFID) <span class="comment">%consider only no sure assignments</span>
+
+              AntennasubAfterRFID=SubsetAntennaNumber(IsubAfterRFID);
+              [~,indexX]=setdiff(xpos,XAssignment(find(IindicateNoSureCoord==0)),<span class="string">'stable'</span>); <span class="comment">% return the xpos which aren't in Xassignment</span>
+              [~,indexY]=setdiff(ypos,YAssignment(find(IindicateNoSureCoord==0)),<span class="string">'stable'</span>); <span class="comment">% return the xpos which aren't in Xassignment</span>
+              xposAfterRFID=xpos(indexX(find(indexX==indexY)));
+              yposAfterRFID=ypos(indexY(find(indexX==indexY)));
+              xposPixelAfterRFID=xposPixel(indexX(find(indexX==indexY)));
+              yposPixelAfterRFID=yposPixel(indexY(find(indexX==indexY)));
+              OrientationAfterRFID=deg2rad(Orientation(indexY(find(indexX==indexY))));
+              XPixelLastFrameAfter=XPixelLastFrame(IsubAfterRFID);
+              YPixelLastFrameAfter=YPixelLastFrame(IsubAfterRFID);
+              XLastFrameAfter=XLastFrame(IsubAfterRFID);
+              YLastFrameAfter=YLastFrame(IsubAfterRFID);
+<span class="comment">%               OrientationLastFrameAfter=deg2rad(OrientationLastFrame(IsubAfterRFID));</span>
+              OrientationLastFrameAfter=(OrientationLastFrame(IsubAfterRFID));
+              <span class="comment">% Convert degrees into radians</span>
+
+            <span class="comment">% Arrange Matrix with distance and orientations</span>
+             MatrixToMinimizeSecond=Matrix_to_Consider_LastFrame(xposPixelAfterRFID,yposPixelAfterRFID,OrientationAfterRFID,<span class="keyword">...</span><span class="comment">..</span>
+                                  XPixelLastFrameAfter,YPixelLastFrameAfter,OrientationLastFrameAfter);
+             <span class="comment">% Minimize the matrix</span>
+                [assignmentFSecond,~]=munkresForMiceTracer(MatrixToMinimizeSecond);
+             <span class="comment">% Do again the assignment</span>
+               <span class="keyword">for</span> countAssigment=1:length(assignmentFSecond)
+
+                    XAssignment(IsubAfterRFID(countAssigment))=xposAfterRFID(assignmentFSecond(countAssigment));
+                    YAssignment(IsubAfterRFID(countAssigment))=yposAfterRFID(assignmentFSecond(countAssigment));
+                    XAssignmentPixel(IsubAfterRFID(countAssigment))=xposPixelAfterRFID(assignmentFSecond(countAssigment));
+                    YAssignmentPixel(IsubAfterRFID(countAssigment))=yposPixelAfterRFID(assignmentFSecond(countAssigment));
+                    OrientationAssignment(IsubAfterRFID(countAssigment))=OrientationAfterRFID(assignmentFSecond(countAssigment));
+
+<span class="comment">%                      %Arrange  the vector to know the cetainty of the data. Be sure that the position is different from 1e6 and the velocity is reasonable.</span>
+<span class="comment">%                       velocity=VelocityCalculation(XAssignment(IsubAfterRFID(countAssigment)),....</span>
+<span class="comment">%                                        YAssignment(IsubAfterRFID(countAssigment)),.....</span>
+<span class="comment">%                                         XLastFrameAfter(countAssigment),YLastFrameAfter(countAssigment),...</span>
+<span class="comment">%                                         TimeExp{countFrames-1},TimeExp{countFrames});</span>
+<span class="comment">%</span>
+<span class="comment">%                        % Arrange the indicator vector</span>
+<span class="comment">%                        if velocity &lt;VelocityThreshold</span>
+<span class="comment">%                            % If the condition is applied then the</span>
+<span class="comment">%                            % assignment is sure</span>
+<span class="comment">%                            IindicateNoSureCoord(IsubAfterRFID(countAssigment))=0;</span>
+<span class="comment">%                        end</span>
+
+             <span class="keyword">end</span>
+
+          <span class="keyword">end</span>
+
+
+
+    <span class="keyword">end</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2 id="7">--------------------------Add a final vector of velocity for final control--------------------</h2><pre class="codeinput">   <span class="keyword">if</span> countFrames&gt;1
+
+    IindicateNoSureCoord=zeros(1,length(IndexArena));
+    [IindicateNoSureCoord,velocityFinal]=CheckingValidityFinal(countFrames,XAssignment,YAssignment,<span class="keyword">...</span><span class="comment">..</span>
+                      XLastFrame,YLastFrame,TimeExp{countFrames-1},TimeExp{countFrames},NoSureSignalLastFrame,<span class="keyword">...</span><span class="comment">.</span>
+                      VelocityThreshold,IindicateNoSureCoord,VelLastFrame,FactorAcceleration,IndexRightWithRFID);
+
+   <span class="keyword">else</span>
+      velocityFinal=zeros(size(IndexArena,1),1);
+
+   <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function [XAssignment,YAssignment, XAssignmentPixel,YAssignmentPixel,IindicateNoSureCoord,OrientationAssignment,velocityFinal]=FindArena(IndexArena,AntennaNumber,AntennaCoord,DeltaTimeRFID,countFrames,....
+                   xposPixel,yposPixel,xpos,ypos,MaxRFIDDistance,DeltaFrame,......
+                   Orientation,OrientationLastFrame,XPixelLastFrame,YPixelLastFrame,XLastFrame,YLastFrame,...
+                   TimeExp,VelocityThreshold,VelLastFrame, NoSureSignalLastFrame,FactorAcceleration)
+%This function find the coordinates of the mouse in the arena a vector 
+%% Variables
+ DistanceAssignment=[];
+  XAssignment=[];
+  YAssignment=[];
+  XAssignmentPixel=[];
+  YAssignmentPixel=[];
+  OrientationAssignment=[];
+  
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Select the antenna inside the arena which are unique and duplicate duplicateREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+SubsetAntennaNumber=AntennaNumber(IndexArena,1);
+SubsetDeltaTimeRFID=DeltaTimeRFID(IndexArena,1);
+% Get the antenna which are and aren't unique.
+[~,ind]=unique(SubsetAntennaNumber,'stable');
+SubsetAntennaNumberDuplicate=SubsetAntennaNumber(setdiff(1:size(SubsetAntennaNumber,1),ind));%This gives the antenna number which are duplicated
+SubsetAntennaNumberDuplicate=unique(SubsetAntennaNumberDuplicate); %This gives only one number for each duplicate
+[SubsetAntennaNumberUnique,id]=setdiff(SubsetAntennaNumber,SubsetAntennaNumberDuplicate,'stable'); %This gives the antenna number which are unique
+Iindicate_uniqueAntenna=zeros(size(SubsetAntennaNumber,1),1);
+Iindicate_uniqueAntenna(id,1)=1;
+%find the antenna coordinate
+ AntennaX=AntennaCoord(SubsetAntennaNumber,1);
+ AntennaY=AntennaCoord(SubsetAntennaNumber,2);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHConsider First Frame REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+% Calculate the distance from each possible postion to a given antenna.
+%if the distance less than and delta time less than the result is certain
+%and 0 and antenna es unique if not is 1.
+%Create a report matrix
+
+   % %%%%%%%%%%%%%%%%Arrange distance from antenna into a matrix%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+   [MatrixToMinimize,DistanceMatrix,DeltaRFIDaux]=Matrix_to_Consider_RFID(xpos,ypos,AntennaX,AntennaY,.....
+                                                    SubsetDeltaTimeRFID,MaxRFIDDistance,DeltaFrame,Orientation);
+   % %%%%%%%%%%%%%%Assign to each antenna the minimum distance in such a way that the sum
+        %is minimum and each antenna receive a different assignment,application
+        %of hungariam algoritm%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [assignmentF,~]=munkresForMiceTracer(MatrixToMinimize); 
+    % %%%%%%%%%%%%%%%%%%%%%%%Do the assignment according to minimal value%%%%%%%%%%%%%%%%%%%%%%%%
+     for countAssigment=1:length(assignmentF) 
+        DistanceAssignment(countAssigment)=DistanceMatrix(assignmentF(countAssigment),countAssigment); 
+        XAssignment(countAssigment)=xpos(assignmentF(countAssigment));
+        YAssignment(countAssigment)=ypos(assignmentF(countAssigment));
+        XAssignmentPixel(countAssigment)=xposPixel(assignmentF(countAssigment));
+        YAssignmentPixel(countAssigment)=yposPixel(assignmentF(countAssigment));
+        OrientationAssignment(countAssigment)=Orientation(assignmentF(countAssigment));
+     end
+   % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Create a vector to know the cetainty of the data%%%%%%%%%%%%%%%%%%%%  
+    Ilogical=(DistanceAssignment'<MaxRFIDDistance)& ((DeltaRFIDaux(1,:))'<DeltaFrame)& Iindicate_uniqueAntenna ;
+    IindicateNoSureCoord=~Ilogical; %1 value indicate that the value isn't sure
+    IindicateNoSureCoord=IindicateNoSureCoord';
+    % %%%%%%%%%%%%%%%%%%%%Do a Second control for count frames>1%%%%%%%%%%%%%%%%%%%%%%%%%
+    if countFrames~=1
+      % Find last coord. and orientation inside the arena
+                XPixelLastFrame=XPixelLastFrame(IndexArena);
+                YPixelLastFrame=YPixelLastFrame(IndexArena);
+                XLastFrame=XLastFrame(IndexArena);
+                YLastFrame=YLastFrame(IndexArena);
+                OrientationLastFrame=OrientationLastFrame(IndexArena);
+                VelLastFrame= VelLastFrame(IndexArena);   
+                NoSureSignalLastFrame=NoSureSignalLastFrame(IndexArena); 
+    end
+   
+    % Checking the validity of positions which were considered sure%%%%%%%%%%%%%%%%%%%%%%
+ if countFrames>1
+        if ~isempty(find(IindicateNoSureCoord==0)) % this is done only with sure candidates  coordinates
+          IindicateNoSureCoord=CheckingValidity(countFrames,find(IindicateNoSureCoord==0),XAssignment(find(IindicateNoSureCoord==0)),YAssignment(find(IindicateNoSureCoord==0)),.....
+                      XLastFrame(find(IindicateNoSureCoord==0)),YLastFrame(find(IindicateNoSureCoord==0)),...
+                      TimeExp{countFrames-1},TimeExp{countFrames},NoSureSignalLastFrame,....
+                      VelocityThreshold,IindicateNoSureCoord,VelLastFrame,FactorAcceleration);
+        end         
+     % For further use get the index of the right places
+     IndexRightWithRFID=find(IindicateNoSureCoord==0);
+ end                 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        
+    %% For count frames different from the first one also we take into acount the  last frame
+    if countFrames~=1 & any(IindicateNoSureCoord)
+    % Group only the positions and antennas which were not defined with
+    % RFID
+          IsubAfterRFID=find(IindicateNoSureCoord==1);
+          if ~isempty(IsubAfterRFID) %consider only no sure assignments
+                  
+              AntennasubAfterRFID=SubsetAntennaNumber(IsubAfterRFID);
+              [~,indexX]=setdiff(xpos,XAssignment(find(IindicateNoSureCoord==0)),'stable'); % return the xpos which aren't in Xassignment
+              [~,indexY]=setdiff(ypos,YAssignment(find(IindicateNoSureCoord==0)),'stable'); % return the xpos which aren't in Xassignment
+              xposAfterRFID=xpos(indexX(find(indexX==indexY)));
+              yposAfterRFID=ypos(indexY(find(indexX==indexY)));
+              xposPixelAfterRFID=xposPixel(indexX(find(indexX==indexY)));
+              yposPixelAfterRFID=yposPixel(indexY(find(indexX==indexY)));
+              OrientationAfterRFID=deg2rad(Orientation(indexY(find(indexX==indexY))));
+              XPixelLastFrameAfter=XPixelLastFrame(IsubAfterRFID);
+              YPixelLastFrameAfter=YPixelLastFrame(IsubAfterRFID);
+              XLastFrameAfter=XLastFrame(IsubAfterRFID);
+              YLastFrameAfter=YLastFrame(IsubAfterRFID);
+%               OrientationLastFrameAfter=deg2rad(OrientationLastFrame(IsubAfterRFID));
+              OrientationLastFrameAfter=(OrientationLastFrame(IsubAfterRFID));
+              % Convert degrees into radians
+              
+            % Arrange Matrix with distance and orientations  
+             MatrixToMinimizeSecond=Matrix_to_Consider_LastFrame(xposPixelAfterRFID,yposPixelAfterRFID,OrientationAfterRFID,.....
+                                  XPixelLastFrameAfter,YPixelLastFrameAfter,OrientationLastFrameAfter); 
+             % Minimize the matrix
+                [assignmentFSecond,~]=munkresForMiceTracer(MatrixToMinimizeSecond); 
+             % Do again the assignment
+               for countAssigment=1:length(assignmentFSecond) 
+                   
+                    XAssignment(IsubAfterRFID(countAssigment))=xposAfterRFID(assignmentFSecond(countAssigment));
+                    YAssignment(IsubAfterRFID(countAssigment))=yposAfterRFID(assignmentFSecond(countAssigment));
+                    XAssignmentPixel(IsubAfterRFID(countAssigment))=xposPixelAfterRFID(assignmentFSecond(countAssigment));
+                    YAssignmentPixel(IsubAfterRFID(countAssigment))=yposPixelAfterRFID(assignmentFSecond(countAssigment));
+                    OrientationAssignment(IsubAfterRFID(countAssigment))=OrientationAfterRFID(assignmentFSecond(countAssigment));
+                    
+%                      %Arrange  the vector to know the cetainty of the data. Be sure that the position is different from 1e6 and the velocity is reasonable.
+%                       velocity=VelocityCalculation(XAssignment(IsubAfterRFID(countAssigment)),....
+%                                        YAssignment(IsubAfterRFID(countAssigment)),.....
+%                                         XLastFrameAfter(countAssigment),YLastFrameAfter(countAssigment),...
+%                                         TimeExp{countFrames-1},TimeExp{countFrames});
+%                      
+%                        % Arrange the indicator vector 
+%                        if velocity <VelocityThreshold
+%                            % If the condition is applied then the
+%                            % assignment is sure
+%                            IindicateNoSureCoord(IsubAfterRFID(countAssigment))=0; 
+%                        end
+    
+             end
+
+          end
+
+          
+          
+    end     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHAdd a final vector of velocity for final controlREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+   if countFrames>1
+    
+    IindicateNoSureCoord=zeros(1,length(IndexArena));
+    [IindicateNoSureCoord,velocityFinal]=CheckingValidityFinal(countFrames,XAssignment,YAssignment,.....
+                      XLastFrame,YLastFrame,TimeExp{countFrames-1},TimeExp{countFrames},NoSureSignalLastFrame,....
+                      VelocityThreshold,IindicateNoSureCoord,VelLastFrame,FactorAcceleration,IndexRightWithRFID);
+   
+   else
+      velocityFinal=zeros(size(IndexArena,1),1);  
+       
+   end
+   
+   
+   
+   
+  
+end
+##### SOURCE END #####
+--></body></html>

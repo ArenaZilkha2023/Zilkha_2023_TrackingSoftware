@@ -1,0 +1,1107 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ManagerMouseTrace</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-11-28"><meta name="DC.source" content="ManagerMouseTrace.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">Read initial parameter</a></li><li><a href="#4">Read the names of the file movies</a></li><li><a href="#6">Read reference file which is used to remove background from each frame during all the experiment</a></li><li><a href="#7">---Find the contour of the arena -</a></li><li><a href="#8">---------------------------Treat movies-----------------------</a></li><li><a href="#9">Loop over each movie</a></li><li><a href="#11">Load /read movie</a></li><li><a href="#12">Create object to write the cutted video and the cutted video with segmentation</a></li><li><a href="#14">%% Initialize variables for segmentation</a></li><li><a href="#15">Define variables</a></li><li><a href="#16">Prepare</a></li><li><a href="#19">Try to check when to save part of the video</a></li><li><a href="#20">%% Save in a structure important variables</a></li><li><a href="#22">CLear variables once it is saved the counter return to the beggining</a></li><li><a href="#23">%% Initialize variables for segmentation</a></li><li><a href="#24">Open again the videos for writing</a></li><li><a href="#26">Get segmentation for each frame</a></li><li><a href="#30">Save in a structure important variables</a></li><li><a href="#31">Save the movie without segmentation and the data</a></li><li><a href="#36">Read the directories inside the given folder</a></li><li><a href="#37">Read the initial parameters about mice information and coordinates the same for every file--And also read the date</a></li><li><a href="#38">Add The corners</a></li><li><a href="#39">Loop over each folder</a></li><li><a href="#41">Variables</a></li><li><a href="#43">Order variables for later saving</a></li><li><a href="#44">Save the variables</a></li><li><a href="#45">Show the frames</a></li><li><a href="#47">Add text and name of the mouse on the side</a></li><li><a href="#52">------------------------- Auxiliary function----------------------------------------------</a></li><li><a href="#53">Find the date</a></li><li><a href="#54">Time difference between frames</a></li><li><a href="#55">Remove double string from the time</a></li><li><a href="#56">Function to decide reading all the movies or only one movie</a></li><li><a href="#57">Save the data</a></li><li><a href="#59">Create the folders and the names of the files to save the data</a></li><li><a href="#60">Save video</a></li><li><a href="#61">Save the data in a structure</a></li><li><a href="#65">function for arranging data into matrix</a></li><li><a href="#68">REMOVE NOT REAL VELOCITIES</a></li><li><a href="#71">Save cell array as csv</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> ManagerMouseTrace(~,~)
+</pre><pre class="codeinput"><span class="comment">%Manager of the mouse Trace</span>
+</pre><h2>Read initial parameter<a name="3"></a></h2><pre class="codeinput">Initial_Parameters=Parameters();
+<span class="keyword">global</span> h
+</pre><pre class="codeoutput error">Undefined function or variable 'Parameters'.
+
+Error in ManagerMouseTrace (line 4)
+Initial_Parameters=Parameters();
+</pre><h2>Read the names of the file movies<a name="4"></a></h2><pre class="codeinput">Movies_file=dir(fullfile(Initial_Parameters.DataDirectory,<span class="string">'*.avi'</span>));
+
+
+
+<span class="comment">%Frame Rate</span>
+
+FrameRate=Initial_Parameters.FrameRate;
+
+<span class="comment">%Decide if to analysis all the movies or only part</span>
+
+MoviesToConsider= Initial_Parameters.MoviesToConsider;
+</pre><pre class="codeinput">Range=FindRangeReadMovies(MoviesToConsider,Movies_file);
+
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%Begin reading time stamp and segmentation%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="keyword">if</span> Initial_Parameters.SegmentationCheckBox==1
+</pre><h2>Read reference file which is used to remove background from each frame during all the experiment<a name="6"></a></h2><p>This is a reference image without mice.</p><pre class="codeinput">v=VideoReader(Initial_Parameters.ReferenceFile);
+ v.CurrentTime=str2num(Initial_Parameters.ReferenceFrame)/v.FrameRate;
+
+ InitialFrame=readFrame(v);
+<span class="comment">%InitialFrame=read(v,str2num(Initial_Parameters.ReferenceFrame));</span>
+
+InitialFrame=rgb2gray(InitialFrame);<span class="comment">%convert to gray scale from rgb</span>
+
+InitialFrame=mat2gray(InitialFrame); <span class="comment">%normalize between 0 to 1</span>
+</pre><h2>---Find the contour of the arena -<a name="7"></a></h2><pre class="codeinput"> [PixelsArenaContour]=ThresholdingBackgroundFrame(InitialFrame);
+</pre><h2>---------------------------Treat movies-----------------------<a name="8"></a></h2><h2>Loop over each movie<a name="9"></a></h2><pre class="codeinput">        <span class="keyword">for</span> count=Range
+</pre><pre class="codeinput">             <span class="comment">%for count=3</span>
+</pre><h2>Load /read movie<a name="11"></a></h2><pre class="codeinput">                v = VideoReader(fullfile(Initial_Parameters.DataDirectory,Movies_file(count).name));
+                numFrames= ceil(FrameRate*v.Duration);<span class="comment">%it is approximate</span>
+</pre><h2>Create object to write the cutted video and the cutted video with segmentation<a name="12"></a></h2><pre class="codeinput">                writer1=VideoWriter(<span class="string">'temp1.avi'</span>);
+                writer1.FrameRate = FrameRate;
+
+                writer2=VideoWriter(<span class="string">'temp2.avi'</span>);
+                writer2.FrameRate = FrameRate;
+
+                open(writer1);
+                open(writer2);
+</pre><pre class="codeinput">                <span class="keyword">if</span> count==1 <span class="comment">%first movie</span>
+
+                   <span class="keyword">if</span>   Initial_Parameters.StartingTimeCheckBox==1          <span class="comment">%the checkbox is on</span>
+
+                       v.CurrentTime=str2num(Initial_Parameters.StartingTime)/FrameRate; <span class="comment">%starting time in seconds</span>
+                   <span class="keyword">end</span>
+
+                <span class="keyword">end</span>
+</pre><h2>%% Initialize variables for segmentation<a name="14"></a></h2><pre class="codeinput">                Coordinates=[];
+                NumberOfFrame=[];
+                CoordinatesR=[];
+                NumberOfFrameR=[];
+</pre><h2>Define variables<a name="15"></a></h2><pre class="codeinput">                k=1;
+                clear <span class="string">mov</span>;
+                Origin=1;
+                CountWaitBar=1;
+</pre><h2>Prepare<a name="16"></a></h2><pre class="codeinput">                 <span class="comment">%looping over every frame to read the time stamp</span>
+                 <span class="keyword">while</span> hasFrame(v) <span class="comment">%the first slide is without time -we don't consider</span>
+                     clear <span class="string">Iaux</span>
+
+                               <span class="keyword">if</span> k==1
+                                    s(k).cdata=readFrame(v);
+                                    Iaux=s(k).cdata;
+
+                               <span class="keyword">else</span>
+</pre><pre class="codeinput">                                    s(k).cdata=readFrame(v);
+                                    Iaux=s(k).cdata;
+</pre><pre class="codeinput">           <span class="comment">% Get time stamp for the movie and create a movie with an adequate fps</span>
+           <span class="comment">% similar to the real one-ADD A CONTROL OF THE TIME</span>
+
+                                    set( h.WaitBar,<span class="string">'Position'</span>,[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBar.Color=<span class="string">'m'</span>;
+                                    pause(0.01)
+
+                                    ExpTime=ManagerReadTimeStamp(Iaux,Initial_Parameters.CropTimeStamp,Initial_Parameters.FontsFile);
+                                    TimeExp(k-1,1)={ExpTime};
+</pre><h2>Try to check when to save part of the video<a name="19"></a></h2><pre class="codeinput">                   <span class="keyword">if</span> k~=2
+
+                      ElapseTime=MeasureTimeDifference(TimeExp(k-1,1), TimeExp(k-2,1));
+
+                      <span class="keyword">if</span> ElapseTime&gt;600 <span class="comment">%if the time is larger than 10 min then save all the information in the respective folder</span>
+</pre><h2>%% Save in a structure important variables<a name="20"></a></h2><pre class="codeinput">                          clear <span class="string">Locomotion</span>
+                           <span class="comment">%Save experimental time</span>
+                            set( h.WaitBarSave,<span class="string">'Position'</span>,[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBarSave.Color=<span class="string">'g'</span>;
+                                    pause(0.01)
+
+                             Locomotion.ExperimentTime=TimeExp(Origin:k-2,:);
+
+                            <span class="comment">%Save Date take from the movie</span>
+                            DateExp=FindDate(Movies_file(count).name);
+                             DateExp=repmat(DateExp,size(TimeExp(Origin:k-2,:)));
+
+                            Locomotion.ExperimentDate=DateExp;
+
+                            <span class="comment">%Save coordinates</span>
+
+                            Locomotion.Coordinates=SegmentationData;
+                            Locomotion.CoordinatesWithRepeats=SegmentationDataR;
+</pre><pre class="codeinput">                              close(writer1);
+                          close(writer2);
+                             SaveMovie_Parameters(Initial_Parameters.DataDirectory,Locomotion,Movies_file(count).name,TimeExp(Origin,1),TimeExp(k-2,1),FrameRate);
+                          <span class="comment">%new definition of origin</span>
+                          <span class="comment">%Origin=k-1;</span>
+</pre><h2>CLear variables once it is saved the counter return to the beggining<a name="22"></a></h2><pre class="codeinput">                          k=2;
+                          Origin=1;
+                          clear <span class="string">TimeExp</span>;
+                          clear <span class="string">DateExp</span>;
+                          clear <span class="string">SegmentationData</span>;
+                          clear <span class="string">SegmentationDataR</span>;
+
+                          clear <span class="string">NumberOfFrame</span>;
+                          clear <span class="string">NumberOfFrameR</span>;
+                           TimeExp(1,1)={ExpTime};
+</pre><h2>%% Initialize variables for segmentation<a name="23"></a></h2><pre class="codeinput">                         Coordinates=[];
+                        NumberOfFrame=[];
+                        CoordinatesR=[];
+                        NumberOfFrameR=[];
+</pre><h2>Open again the videos for writing<a name="24"></a></h2><pre class="codeinput">                          open(writer1);
+                          open(writer2);
+</pre><pre class="codeinput">                      <span class="keyword">end</span>
+                   <span class="keyword">end</span>
+</pre><h2>Get segmentation for each frame<a name="26"></a></h2><pre class="codeinput">                                    set( h.WaitBarS,<span class="string">'Position'</span>,[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBarS.Color=<span class="string">'b'</span>;
+                                    pause(0.01)
+
+                                  [CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,Frame]=ManagerFindCoordinates(Iaux,InitialFrame,PixelsArenaContour,CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,k);
+
+                                  SegmentationData=[NumberOfFrame,Coordinates];
+
+                                  SegmentationDataR=[NumberOfFrameR,CoordinatesR];
+</pre><pre class="codeinput">                                  <span class="comment">%%---------------------Create a movie save each time a different frame--------------</span>
+<span class="comment">%                                     mov(k-1)=im2frame(s(k).cdata);  %Create a movie without any mark on it</span>
+<span class="comment">%                                     mov1(k-1)=im2frame(Frame);   %Create a movie with the position from the segmentation</span>
+                                 writeVideo(writer1,im2frame(s(k).cdata));
+                                 writeVideo(writer2,im2frame(Frame));
+</pre><pre class="codeinput">                           <span class="keyword">end</span>
+                        k=k+1
+                        CountWaitBar=CountWaitBar+1; <span class="comment">%for the wait bar</span>
+                 <span class="keyword">end</span>
+
+  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+       <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Save the data remain</span>
+  <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>Save in a structure important variables<a name="30"></a></h2><pre class="codeinput">                 <span class="comment">%Save experimental time</span>
+                  Locomotion.ExperimentTime=TimeExp(Origin:end);
+
+                 <span class="comment">%Save Date take from the movie</span>
+                  DateExp=FindDate(Movies_file(count).name);
+                  DateExp=repmat(DateExp,size(TimeExp(Origin:end)));
+
+                   Locomotion.ExperimentDate=DateExp;
+
+                   <span class="comment">%Save coordinates</span>
+
+                   Locomotion.Coordinates=SegmentationData;
+                   Locomotion.CoordinatesWithRepeats=SegmentationDataR; <span class="comment">%Save coordinates with repetitions</span>
+
+                   close(writer1);
+                    close(writer2);
+</pre><h2>Save the movie without segmentation and the data<a name="31"></a></h2><pre class="codeinput">                    [NameToSaveD,NameToSave]=Rename_Save_Directory(Movies_file(count).name,TimeExp(1,1),TimeExp(size(TimeExp,1),1));
+                    A=strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,NameToSaveD)
+                    mkdir(char(A));
+                    B=strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'.avi'</span>);
+                    D=strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'WithSegmentation.avi'</span>);
+                    C=strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'.mat'</span>);
+
+                    movefile(<span class="string">'temp1.avi'</span>,char(B));
+                    movefile(<span class="string">'temp2.avi'</span>,char(D));
+
+
+
+                    save(char(C),<span class="string">'Locomotion'</span>);
+</pre><pre class="codeinput">        <span class="keyword">end</span>
+
+        <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%Finish reading time stamp and segmentation%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%Add RFID according to a</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%checkbox%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><pre class="codeinput"><span class="keyword">elseif</span> Initial_Parameters.RFIDCheckBox==1
+</pre><pre class="codeinput">    <span class="comment">%Loop over each folder</span>
+</pre><h2>Read the directories inside the given folder<a name="36"></a></h2><pre class="codeinput">    List_Directories= dir(Initial_Parameters.DataDirectory);
+   List_Directories= List_Directories([List_Directories.isdir]);
+</pre><h2>Read the initial parameters about mice information and coordinates the same for every file--And also read the date<a name="37"></a></h2><pre class="codeinput">       IndexAux=strfind(Initial_Parameters.DataDirectory,<span class="string">'\'</span>);
+
+       Date=Initial_Parameters.DataDirectory(IndexAux(end)+1:end);
+       Date=strrep(Date,<span class="string">'.'</span>,<span class="string">'/'</span>);
+       <span class="comment">%[status,sheet]=xlsfinfo(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,'MiceID.xlsx'));</span>
+       sheet=char(Initial_Parameters.ExperimentName);
+
+       [num,txt,raw]=xlsread(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,<span class="string">'Parameters'</span>,<span class="string">'MiceID.xlsx'</span>),sheet);
+         miceList=raw(2:end,2);
+        miceList=strrep(miceList,<span class="string">''''</span>,<span class="string">''</span>); <span class="comment">%for removing double quotes</span>
+        miceList=miceList(~strcmp(miceList,<span class="string">''</span>)); <span class="comment">%remove empty places</span>
+
+        miceListRibs=raw(2:end,3);
+        miceListRibs=strrep(miceListRibs,<span class="string">''''</span>,<span class="string">''</span>);
+        miceListRibs=miceListRibs(~strcmp(miceListRibs,<span class="string">''</span>));
+       <span class="comment">%in the case of a third chip</span>
+
+        miceListRibsSide=raw(2:end,4);
+        miceListRibsSide=strrep(miceListRibsSide,<span class="string">''''</span>,<span class="string">''</span>);
+        miceListRibsSide=miceListRibsSide(~strcmp(miceListRibsSide,<span class="string">''</span>));
+</pre><h2>Add The corners<a name="38"></a></h2><pre class="codeinput">        load(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,<span class="string">'Parameters'</span>,<span class="string">'MovingParametersInArena.mat'</span>),<span class="string">'Corners_PixelCoordinates'</span>);
+
+        Corn=Corners_PixelCoordinates;
+</pre><h2>Loop over each folder<a name="39"></a></h2><pre class="codeinput"> <span class="comment">%  for countD=3:length(List_Directories) %at the beggining aren't files</span>
+   <span class="comment">% for countD=3:length(List_Directories)</span>
+     <span class="keyword">for</span> countD=length(List_Directories)
+</pre><pre class="codeinput">    <span class="comment">%Load matlab files from the segmentation</span>
+    fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name)
+       MatFile=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,<span class="string">'*.mat'</span>));
+       load(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name));
+
+       <span class="comment">%Load avi files and select only the one without segmentation</span>
+        AviFileS=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,<span class="string">'*WithSegmentation.avi'</span>));
+        AviFile=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,<span class="string">'*.avi'</span>));
+        IwithoutS=find(strcmp(AviFile,AviFileS)==0);
+
+        v1=VideoReader(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,AviFile(IwithoutS).name));
+</pre><h2>Variables<a name="41"></a></h2><pre class="codeinput">       TimeExp=Locomotion.ExperimentTime;
+       Position=Locomotion.CoordinatesWithRepeats;
+</pre><pre class="codeinput">   [AntennaForMiceT,CoordinatesFinalMiceMM,CoordinatesFinalMice,FidelityMatrix,FidelityVelocity,FidelityForNonCoord,IsSleeping,TotalVelocity]=ManagerRFIDCoupling(Corn,TimeExp,Position,miceList,miceListRibs,miceListRibsSide,Initial_Parameters.DataDirectory,Date);
+
+     <span class="comment">%save mat data</span>
+
+               load(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name),<span class="string">'Locomotion'</span>);
+</pre><h2>Order variables for later saving<a name="43"></a></h2><pre class="codeinput">                Locomotion.ExperimentDate=cellstr(Locomotion.ExperimentDate);
+                Locomotion.IsSleeping=num2cell(IsSleeping);
+                Locomotion.TotalVelocity=num2cell(TotalVelocity);
+                Locomotion.FidelityVelocity=num2cell(FidelityVelocity);
+                 Locomotion.CoordinatesFinalMiceMM=CoordinatesFinalMiceMM;
+                Locomotion.CoordinatesFinalMicePixel=CoordinatesFinalMice;
+                Locomotion.AntennaInformation=AntennaForMiceT;
+</pre><h2>Save the variables<a name="44"></a></h2><pre class="codeinput">              Matrix_RFID_MM=Arrange_In_Matrix_RFIDData(TimeExp,Locomotion.ExperimentDate,strcat(<span class="string">''''</span>,miceList,<span class="string">''''</span>),CoordinatesFinalMiceMM,TotalVelocity);
+
+
+
+
+
+
+              MovieNameRFID=FindNameMovieChange(AviFile(IwithoutS).name);
+             hhaux=msgbox(<span class="string">'Wait...........'</span>);
+              SaveAsCsvCell(strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,List_Directories(countD).name,<span class="string">'\'</span>,MovieNameRFID,<span class="string">'.csv.csv'</span>),Matrix_RFID_MM);
+
+
+            <span class="comment">% dlmwrite(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'.csv'),Matrix_RFID,'delimiter','\t');</span>
+              <span class="comment">%dlmwrite(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'WithRFIDPixel.csv'),CoordinatesFinalMice,'delimiter','\t');</span>
+    <span class="comment">%save to mat file again locomotion</span>
+    save(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name),<span class="string">'Locomotion'</span>);
+
+            close(hhaux);
+</pre><h2>Show the frames<a name="45"></a></h2><p>create writer object for video</p><pre class="codeinput"> writeRFID=VideoWriter(strcat(Initial_Parameters.DataDirectory,<span class="string">'\'</span>,List_Directories(countD).name,<span class="string">'\'</span>,MovieNameRFID,<span class="string">'WithRFID.avi'</span>));
+  writeRFID.FrameRate = 12.8;
+ open(writeRFID)
+
+ t=1;
+  <span class="keyword">for</span> countFrames=1:size(CoordinatesFinalMice,1)
+<span class="comment">% for countFrames=600</span>
+      set(  h.WaitBarRFIDS,<span class="string">'Position'</span>,[0.00001 0.00900 (countFrames/size(CoordinatesFinalMice,1)) 0.8]);
+    h.WaitBarRFIDS.Color=<span class="string">'g'</span>;
+   pause(0.01)
+
+     countFrames
+   Frame=read(v1,countFrames);
+  C={<span class="string">'red'</span>,<span class="string">'cyan'</span>,<span class="string">'green'</span>,<span class="string">'yellow'</span>,<span class="string">'magenta'</span>};
+
+    <span class="keyword">for</span> m=1:length(miceList)
+</pre><pre class="codeinput">        position=[CoordinatesFinalMice(countFrames,2*m-1),CoordinatesFinalMice(countFrames,2*m),4];
+        Frame=insertShape(Frame,<span class="string">'FilledCircle'</span>,position,<span class="string">'LineWidth'</span>, 2,<span class="string">'Color'</span>,C{m});
+        <span class="keyword">if</span> countFrames &gt;20 <span class="comment">%then add to each mouse 10 frames of trajectory</span>
+           <span class="keyword">if</span> CoordinatesFinalMice(countFrames-3,2*m-1)~=1e6 &amp; CoordinatesFinalMice(countFrames-2,2*m-1)~=1e6 &amp; CoordinatesFinalMice(countFrames-1,2*m-1)~=1e6 &amp; CoordinatesFinalMice(countFrames,2*m-1)~=1e6
+              <span class="keyword">if</span> CoordinatesFinalMice(countFrames-3,2*m-1)~=0 &amp; CoordinatesFinalMice(countFrames-2,2*m-1)~=0 &amp; CoordinatesFinalMice(countFrames-1,2*m-1)~=0 &amp; CoordinatesFinalMice(countFrames,2*m-1)~=0
+             position2=[CoordinatesFinalMice(countFrames-3:countFrames,2*m-1),CoordinatesFinalMice(countFrames-3:countFrames,2*m)];
+            auxp=position2';
+            position2=reshape(auxp,[1,2*size(auxp,2)]);
+          Frame=insertShape(Frame,<span class="string">'Line'</span>,position2,<span class="string">'LineWidth'</span>, 2,<span class="string">'Color'</span>,C{m});
+              <span class="keyword">end</span>
+           <span class="keyword">end</span>
+
+        <span class="keyword">end</span>
+
+        <span class="keyword">if</span> IsSleeping(countFrames,m)==1
+            position1=[CoordinatesFinalMice(countFrames,2*m-1),CoordinatesFinalMice(countFrames,2*m)];
+             Frame=insertMarker(Frame,position1,<span class="string">'+'</span>,<span class="string">'size'</span>, 6,<span class="string">'Color'</span>,C{m}); <span class="comment">%add a marker when it is sleeping</span>
+
+        <span class="keyword">end</span>
+</pre><h2>Add text and name of the mouse on the side<a name="47"></a></h2><pre class="codeinput">        Frame=insertShape(Frame,<span class="string">'FilledCircle'</span>,[20,10+m*40,4],<span class="string">'LineWidth'</span>, 2,<span class="string">'Color'</span>,C{m});
+        Frame=insertText(Frame,[35,10+m*40],miceList{m});
+</pre><pre class="codeinput">  <span class="keyword">end</span>
+
+
+     writeVideo(writeRFID,Frame);
+
+
+
+ <span class="keyword">end</span>
+
+
+   w=cd;  <span class="comment">%current directory</span>
+
+<span class="comment">%</span>
+close( writeRFID)
+</pre><pre class="codeinput">    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+
+
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%End%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+</pre><h2>------------------------- Auxiliary function----------------------------------------------<a name="52"></a></h2><pre class="codeinput"><span class="comment">% Create name of save folder and save directary</span>
+<span class="keyword">function</span>   [NameToSaveD,NameToSave]=Rename_Save_Directory(MovieFile,InitialTime,FinalTime)
+
+InitialTime=strrep(InitialTime,<span class="string">''''</span>,<span class="string">''</span>);
+FinalTime=strrep(FinalTime,<span class="string">''''</span>,<span class="string">''</span>);
+
+MovieFile=char(MovieFile);
+indexLetter=strfind(MovieFile,<span class="string">'.avi'</span>);
+
+InitialTime1=strrep(InitialTime,<span class="string">':'</span>,<span class="string">'_'</span>);
+FinalTime1=strrep(FinalTime,<span class="string">':'</span>,<span class="string">'_'</span>);
+
+NameToSaveD=strcat(MovieFile(1:indexLetter-1),<span class="string">'['</span>,InitialTime1,<span class="string">'-'</span>,FinalTime1,<span class="string">']'</span>);
+
+NameToSave=strcat(MovieFile(1:indexLetter-1),<span class="string">'['</span>,InitialTime,<span class="string">'-'</span>,FinalTime,<span class="string">']'</span>);
+
+<span class="keyword">end</span>
+</pre><h2>Find the date<a name="53"></a></h2><pre class="codeinput"><span class="keyword">function</span> DateExp=FindDate(MovieName)
+
+Index=strfind(char(MovieName),<span class="string">'-'</span>);
+
+DateExp=MovieName(1:Index-1);
+
+DateExp=strrep(DateExp,<span class="string">'.'</span>,<span class="string">'/'</span>);
+DateExp=strcat(<span class="string">''''</span>,DateExp,<span class="string">''''</span>);
+
+<span class="keyword">end</span>
+</pre><h2>Time difference between frames<a name="54"></a></h2><pre class="codeinput"><span class="keyword">function</span> ElapseTime=MeasureTimeDifference(TimeAfter, TimeBefore)
+
+TimeAfter=RemoveDoubleString(TimeAfter);
+TimeBefore=RemoveDoubleString(TimeBefore);
+
+<span class="comment">%translate TimeExp to vector</span>
+
+TimeVectorAfter=datevec(TimeAfter,<span class="string">'HH:MM:SS.FFF'</span>);
+TimeVectorBefore=datevec(TimeBefore,<span class="string">'HH:MM:SS.FFF'</span>);
+
+ElapseTime=abs(etime(TimeVectorAfter,TimeVectorBefore));<span class="comment">% this is given in second</span>
+
+<span class="keyword">end</span>
+</pre><h2>Remove double string from the time<a name="55"></a></h2><pre class="codeinput"><span class="keyword">function</span> TimeExp=RemoveDoubleString(TimeExp)
+
+    <span class="keyword">for</span> count=1:size(TimeExp,1)
+       TimeExp(count,1)=strrep(TimeExp(count,1),<span class="string">''''</span>,<span class="string">''</span>);
+    <span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><h2>Function to decide reading all the movies or only one movie<a name="56"></a></h2><pre class="codeinput"><span class="keyword">function</span> Range=FindRangeReadMovies(MoviesToConsider,Movies_file)
+
+<span class="keyword">if</span> strcmp(MoviesToConsider,<span class="string">'All'</span>)
+    Range=1:size(Movies_file,1);
+<span class="keyword">else</span>
+    <span class="keyword">for</span> i=1:size(Movies_file,1)
+
+        <span class="keyword">if</span> strcmp(Movies_file(i).name,MoviesToConsider)==1
+
+             Range=i;
+
+        <span class="keyword">end</span>
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+</pre><h2>Save the data<a name="57"></a></h2><pre class="codeinput"><span class="keyword">function</span> SaveMovie_Parameters(Initial_Directory,Locomotion,MovieName,OriginTimeOfMovie,FinalTimeOfMovie,FrameRate)
+</pre><h2>Create the folders and the names of the files to save the data<a name="59"></a></h2><pre class="codeinput">  [NameToSaveD,NameToSave]=Rename_Save_Directory(MovieName,OriginTimeOfMovie,FinalTimeOfMovie);
+                    A=strcat(Initial_Directory,<span class="string">'\'</span>,NameToSaveD);
+
+                    mkdir(char(A));
+                    B=strcat(Initial_Directory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'.avi'</span>);
+                    D=strcat(Initial_Directory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'WithSegmentation.avi'</span>);
+                    C=strcat(Initial_Directory,<span class="string">'\'</span>,NameToSaveD,<span class="string">'\'</span>,NameToSaveD,<span class="string">'.mat'</span>);
+</pre><h2>Save video<a name="60"></a></h2><pre class="codeinput">                    movefile(<span class="string">'temp1.avi'</span>,char(B));
+                    movefile(<span class="string">'temp2.avi'</span>,char(D));
+</pre><h2>Save the data in a structure<a name="61"></a></h2><pre class="codeinput">                 save(char(C),<span class="string">'Locomotion'</span>);
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">function</span>  MovieNameRFID=FindNameMovieChange(Name)
+
+I=strfind(Name,<span class="string">'.avi'</span>)
+MovieNameRFID=Name(1:I-1);
+
+<span class="comment">%change [ in the name by (</span>
+
+<span class="comment">% MovieNameRFID=strrep(MovieNameRFID,'[','(');</span>
+<span class="comment">% MovieNameRFID=strrep(MovieNameRFID,']',')');</span>
+
+<span class="keyword">end</span>
+</pre><h2>function for arranging data into matrix<a name="65"></a></h2><pre class="codeinput"><span class="keyword">function</span>  raw=Arrange_In_Matrix_RFIDData(time,date,micelist,coordinates,velocity)
+</pre><pre class="codeinput"><span class="comment">%headers</span>
+raw(1,1)={<span class="string">'Date'</span>};
+raw(1,2)={<span class="string">'Time'</span>};
+</pre><pre class="codeinput"><span class="keyword">for</span> count=1:length(micelist)
+</pre><h2>REMOVE NOT REAL VELOCITIES<a name="68"></a></h2><pre class="codeinput">    Indexaux=find(velocity(1:end,count)&gt;500000);
+    velocity(Indexaux,count)=NaN;
+
+   raw(1,3*count+1)=micelist(count);
+   raw(2,3*count)={<span class="string">'x'</span>};
+   raw(2,3*count+1)={<span class="string">'y'</span>};
+   raw(2,3*count+2)={<span class="string">'velocity'</span>};
+
+   raw(3:size(coordinates,1)+2,3*count:3*count+1)=num2cell(coordinates(1:end,2*count-1:2*count));
+   raw(4:size(coordinates,1)+2,3*count+2)=num2cell(velocity(1:end,count));
+</pre><pre class="codeinput"><span class="keyword">end</span>
+
+<span class="comment">%data</span>
+
+raw(3:size(date,1)+2,1)=date;
+raw(3:size(time,1)+2,2)=time;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Save cell array as csv<a name="71"></a></h2><pre class="codeinput"><span class="keyword">function</span> SaveAsCsvCell(filename,Cell_Array)
+
+
+cellwrite(filename,Cell_Array);
+
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function ManagerMouseTrace(~,~)
+%Manager of the mouse Trace
+%% Read initial parameter
+Initial_Parameters=Parameters();
+global h
+%% Read the names of the file movies
+Movies_file=dir(fullfile(Initial_Parameters.DataDirectory,'*.avi'));
+
+
+
+%Frame Rate
+
+FrameRate=Initial_Parameters.FrameRate;
+
+%Decide if to analysis all the movies or only part
+
+MoviesToConsider= Initial_Parameters.MoviesToConsider;
+%% 
+Range=FindRangeReadMovies(MoviesToConsider,Movies_file);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%Begin reading time stamp and segmentation%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if Initial_Parameters.SegmentationCheckBox==1
+%% Read reference file which is used to remove background from each frame during all the experiment
+% This is a reference image without mice.
+
+v=VideoReader(Initial_Parameters.ReferenceFile);
+ v.CurrentTime=str2num(Initial_Parameters.ReferenceFrame)/v.FrameRate;
+ 
+ InitialFrame=readFrame(v);
+%InitialFrame=read(v,str2num(Initial_Parameters.ReferenceFrame));
+
+InitialFrame=rgb2gray(InitialFrame);%convert to gray scale from rgb 
+
+InitialFrame=mat2gray(InitialFrame); %normalize between 0 to 1
+
+%% REPLACE_WITH_DASH_DASH-Find the contour of the arena -
+ [PixelsArenaContour]=ThresholdingBackgroundFrame(InitialFrame);
+
+
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Treat moviesREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-
+
+        %% Loop over each movie
+        for count=Range
+             %for count=3
+              %% Load /read movie
+                v = VideoReader(fullfile(Initial_Parameters.DataDirectory,Movies_file(count).name));
+                numFrames= ceil(FrameRate*v.Duration);%it is approximate
+                
+              %% Create object to write the cutted video and the cutted video with segmentation
+                writer1=VideoWriter('temp1.avi');
+                writer1.FrameRate = FrameRate;
+                
+                writer2=VideoWriter('temp2.avi');
+                writer2.FrameRate = FrameRate;
+                 
+                open(writer1);
+                open(writer2);
+                
+                %% 
+                
+                if count==1 %first movie
+                    
+                   if   Initial_Parameters.StartingTimeCheckBox==1          %the checkbox is on
+                       
+                       v.CurrentTime=str2num(Initial_Parameters.StartingTime)/FrameRate; %starting time in seconds
+                   end
+                    
+                end    
+                
+                
+                
+                
+                %% %% Initialize variables for segmentation
+                Coordinates=[];
+                NumberOfFrame=[];
+                CoordinatesR=[];
+                NumberOfFrameR=[]; 
+                %% Define variables
+        
+                k=1;
+                clear mov;
+                Origin=1;
+                CountWaitBar=1;
+                %% Prepare 
+                
+                
+                
+                 %looping over every frame to read the time stamp
+                 while hasFrame(v) %the first slide is without time -we don't consider
+                     clear Iaux
+                                
+                               if k==1
+                                    s(k).cdata=readFrame(v);
+                                    Iaux=s(k).cdata;
+                
+                               else
+                                    s(k).cdata=readFrame(v);
+                                    Iaux=s(k).cdata;
+              %% 
+              
+           % Get time stamp for the movie and create a movie with an adequate fps
+           % similar to the real one-ADD A CONTROL OF THE TIME
+                                    
+                                    set( h.WaitBar,'Position',[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBar.Color='m';
+                                    pause(0.01)
+                                 
+                                    ExpTime=ManagerReadTimeStamp(Iaux,Initial_Parameters.CropTimeStamp,Initial_Parameters.FontsFile);
+                                    TimeExp(k-1,1)={ExpTime};
+                                    
+          %% Try to check when to save part of the video 
+                   if k~=2
+                       
+                      ElapseTime=MeasureTimeDifference(TimeExp(k-1,1), TimeExp(k-2,1));
+                       
+                      if ElapseTime>600 %if the time is larger than 10 min then save all the information in the respective folder
+                          %%   %% Save in a structure important variables
+                          clear Locomotion
+                           %Save experimental time
+                            set( h.WaitBarSave,'Position',[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBarSave.Color='g';
+                                    pause(0.01) 
+                           
+                             Locomotion.ExperimentTime=TimeExp(Origin:k-2,:);
+                 
+                            %Save Date take from the movie
+                            DateExp=FindDate(Movies_file(count).name);
+                             DateExp=repmat(DateExp,size(TimeExp(Origin:k-2,:)));
+                  
+                            Locomotion.ExperimentDate=DateExp;
+                   
+                            %Save coordinates
+                   
+                            Locomotion.Coordinates=SegmentationData;
+                            Locomotion.CoordinatesWithRepeats=SegmentationDataR;
+                            %% 
+                              close(writer1);
+                          close(writer2);
+                             SaveMovie_Parameters(Initial_Parameters.DataDirectory,Locomotion,Movies_file(count).name,TimeExp(Origin,1),TimeExp(k-2,1),FrameRate);
+                          %new definition of origin
+                          %Origin=k-1; 
+                        
+                          
+                          
+                          %% CLear variables once it is saved the counter return to the beggining
+                         
+                          k=2;
+                          Origin=1;
+                          clear TimeExp;
+                          clear DateExp;
+                          clear SegmentationData;
+                          clear SegmentationDataR;
+                         
+                          clear NumberOfFrame;
+                          clear NumberOfFrameR;
+                           TimeExp(1,1)={ExpTime};
+                            %% %% Initialize variables for segmentation
+                         Coordinates=[];
+                        NumberOfFrame=[];
+                        CoordinatesR=[];
+                        NumberOfFrameR=[]; 
+                          
+                          %% Open again the videos for writing
+                          open(writer1);
+                          open(writer2);
+                         
+                      end
+                   end
+                                                       
+                                  
+            %% Get segmentation for each frame 
+            
+                                    set( h.WaitBarS,'Position',[0.00001 0.00900 (CountWaitBar/numFrames) 0.8]);
+                                    h.WaitBarS.Color='b';
+                                    pause(0.01)
+                                    
+                                  [CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,Frame]=ManagerFindCoordinates(Iaux,InitialFrame,PixelsArenaContour,CoordinatesR,NumberOfFrameR,Coordinates,NumberOfFrame,k);
+                                  
+                                  SegmentationData=[NumberOfFrame,Coordinates];
+                                  
+                                  SegmentationDataR=[NumberOfFrameR,CoordinatesR];
+                                  %% 
+                                  %%REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH-Create a movie save each time a different frameREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+%                                     mov(k-1)=im2frame(s(k).cdata);  %Create a movie without any mark on it
+%                                     mov1(k-1)=im2frame(Frame);   %Create a movie with the position from the segmentation
+                                 writeVideo(writer1,im2frame(s(k).cdata));
+                                 writeVideo(writer2,im2frame(Frame));
+                                  
+                          
+                %% 
+                           end
+                        k=k+1
+                        CountWaitBar=CountWaitBar+1; %for the wait bar
+                 end
+                 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               
+                 
+       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Save the data remain        
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%               
+      
+                 %% Save in a structure important variables
+                 %Save experimental time
+                  Locomotion.ExperimentTime=TimeExp(Origin:end);
+                 
+                 %Save Date take from the movie
+                  DateExp=FindDate(Movies_file(count).name);
+                  DateExp=repmat(DateExp,size(TimeExp(Origin:end)));
+                  
+                   Locomotion.ExperimentDate=DateExp;
+                   
+                   %Save coordinates
+                   
+                   Locomotion.Coordinates=SegmentationData;
+                   Locomotion.CoordinatesWithRepeats=SegmentationDataR; %Save coordinates with repetitions
+                   
+                   close(writer1);
+                    close(writer2);
+                 %% Save the movie without segmentation and the data
+                    [NameToSaveD,NameToSave]=Rename_Save_Directory(Movies_file(count).name,TimeExp(1,1),TimeExp(size(TimeExp,1),1));
+                    A=strcat(Initial_Parameters.DataDirectory,'\',NameToSaveD)
+                    mkdir(char(A));
+                    B=strcat(Initial_Parameters.DataDirectory,'\',NameToSaveD,'\',NameToSaveD,'.avi');
+                    D=strcat(Initial_Parameters.DataDirectory,'\',NameToSaveD,'\',NameToSaveD,'WithSegmentation.avi');
+                    C=strcat(Initial_Parameters.DataDirectory,'\',NameToSaveD,'\',NameToSaveD,'.mat');
+                    
+                    movefile('temp1.avi',char(B));
+                    movefile('temp2.avi',char(D));
+                   
+                   
+                    
+                    save(char(C),'Locomotion');
+                    
+
+            
+                 
+                 
+                 
+                 
+                 
+        end
+          
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%Finish reading time stamp and segmentation%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+ %%       
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%Add RFID according to a
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%checkbox%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+elseif Initial_Parameters.RFIDCheckBox==1
+    %Loop over each folder
+    %% Read the directories inside the given folder
+    
+    List_Directories= dir(Initial_Parameters.DataDirectory);
+   List_Directories= List_Directories([List_Directories.isdir]);
+   %% Read the initial parameters about mice information and coordinates the same for every fileREPLACE_WITH_DASH_DASHAnd also read the date
+   
+       IndexAux=strfind(Initial_Parameters.DataDirectory,'\');
+       
+       Date=Initial_Parameters.DataDirectory(IndexAux(end)+1:end);
+       Date=strrep(Date,'.','/');
+       %[status,sheet]=xlsfinfo(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,'MiceID.xlsx'));
+       sheet=char(Initial_Parameters.ExperimentName);
+       
+       [num,txt,raw]=xlsread(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,'Parameters','MiceID.xlsx'),sheet);
+         miceList=raw(2:end,2);
+        miceList=strrep(miceList,'''',''); %for removing double quotes
+        miceList=miceList(~strcmp(miceList,'')); %remove empty places
+        
+        miceListRibs=raw(2:end,3);
+        miceListRibs=strrep(miceListRibs,'''','');
+        miceListRibs=miceListRibs(~strcmp(miceListRibs,''));
+       %in the case of a third chip
+       
+        miceListRibsSide=raw(2:end,4);
+        miceListRibsSide=strrep(miceListRibsSide,'''','');
+        miceListRibsSide=miceListRibsSide(~strcmp(miceListRibsSide,''));
+        %% Add The corners
+        load(fullfile(Initial_Parameters.DataDirectory(1:IndexAux(end)), Initial_Parameters.ExperimentName,'Parameters','MovingParametersInArena.mat'),'Corners_PixelCoordinates');
+       
+        Corn=Corners_PixelCoordinates;
+   
+    %% Loop over each folder
+    
+ %  for countD=3:length(List_Directories) %at the beggining aren't files
+   % for countD=3:length(List_Directories)
+     for countD=length(List_Directories)
+          
+      
+    %Load matlab files from the segmentation
+    fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name)
+       MatFile=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,'*.mat'));
+       load(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name));
+     
+       %Load avi files and select only the one without segmentation
+        AviFileS=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,'*WithSegmentation.avi'));
+        AviFile=dir(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,'*.avi'));
+        IwithoutS=find(strcmp(AviFile,AviFileS)==0);
+        
+        v1=VideoReader(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,AviFile(IwithoutS).name));
+        
+        
+        
+       %% Variables
+       
+       TimeExp=Locomotion.ExperimentTime; 
+       Position=Locomotion.CoordinatesWithRepeats;
+       
+       
+       
+       
+        %% 
+        
+        
+   [AntennaForMiceT,CoordinatesFinalMiceMM,CoordinatesFinalMice,FidelityMatrix,FidelityVelocity,FidelityForNonCoord,IsSleeping,TotalVelocity]=ManagerRFIDCoupling(Corn,TimeExp,Position,miceList,miceListRibs,miceListRibsSide,Initial_Parameters.DataDirectory,Date);
+  
+     %save mat data
+   
+               load(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name),'Locomotion');
+               
+                %% Order variables for later saving
+                Locomotion.ExperimentDate=cellstr(Locomotion.ExperimentDate);
+                Locomotion.IsSleeping=num2cell(IsSleeping);
+                Locomotion.TotalVelocity=num2cell(TotalVelocity);
+                Locomotion.FidelityVelocity=num2cell(FidelityVelocity);
+                 Locomotion.CoordinatesFinalMiceMM=CoordinatesFinalMiceMM;
+                Locomotion.CoordinatesFinalMicePixel=CoordinatesFinalMice;
+                Locomotion.AntennaInformation=AntennaForMiceT;
+    
+    
+   %% Save the variables
+   
+              Matrix_RFID_MM=Arrange_In_Matrix_RFIDData(TimeExp,Locomotion.ExperimentDate,strcat('''',miceList,''''),CoordinatesFinalMiceMM,TotalVelocity);
+              
+ 
+               
+               
+               
+    
+              MovieNameRFID=FindNameMovieChange(AviFile(IwithoutS).name);
+             hhaux=msgbox('Wait...........');
+              SaveAsCsvCell(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'.csv.csv'),Matrix_RFID_MM);
+              
+              
+            % dlmwrite(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'.csv'),Matrix_RFID,'delimiter','\t');
+              %dlmwrite(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'WithRFIDPixel.csv'),CoordinatesFinalMice,'delimiter','\t');
+    %save to mat file again locomotion
+    save(fullfile(Initial_Parameters.DataDirectory,List_Directories(countD).name,MatFile.name),'Locomotion');
+    
+            close(hhaux); 
+              
+              %% Show the frames
+ % create writer object for video
+ writeRFID=VideoWriter(strcat(Initial_Parameters.DataDirectory,'\',List_Directories(countD).name,'\',MovieNameRFID,'WithRFID.avi'));
+  writeRFID.FrameRate = 12.8;
+ open(writeRFID)
+ 
+ t=1;
+  for countFrames=1:size(CoordinatesFinalMice,1)
+% for countFrames=600
+      set(  h.WaitBarRFIDS,'Position',[0.00001 0.00900 (countFrames/size(CoordinatesFinalMice,1)) 0.8]);
+    h.WaitBarRFIDS.Color='g';
+   pause(0.01) 
+    
+     countFrames
+   Frame=read(v1,countFrames);
+  C={'red','cyan','green','yellow','magenta'};   
+     
+    for m=1:length(miceList)
+   
+        position=[CoordinatesFinalMice(countFrames,2*m-1),CoordinatesFinalMice(countFrames,2*m),4];   
+        Frame=insertShape(Frame,'FilledCircle',position,'LineWidth', 2,'Color',C{m}); 
+        if countFrames >20 %then add to each mouse 10 frames of trajectory
+           if CoordinatesFinalMice(countFrames-3,2*m-1)~=1e6 & CoordinatesFinalMice(countFrames-2,2*m-1)~=1e6 & CoordinatesFinalMice(countFrames-1,2*m-1)~=1e6 & CoordinatesFinalMice(countFrames,2*m-1)~=1e6
+              if CoordinatesFinalMice(countFrames-3,2*m-1)~=0 & CoordinatesFinalMice(countFrames-2,2*m-1)~=0 & CoordinatesFinalMice(countFrames-1,2*m-1)~=0 & CoordinatesFinalMice(countFrames,2*m-1)~=0
+             position2=[CoordinatesFinalMice(countFrames-3:countFrames,2*m-1),CoordinatesFinalMice(countFrames-3:countFrames,2*m)];
+            auxp=position2';
+            position2=reshape(auxp,[1,2*size(auxp,2)]);
+          Frame=insertShape(Frame,'Line',position2,'LineWidth', 2,'Color',C{m});  
+              end
+           end
+            
+        end    
+        
+        if IsSleeping(countFrames,m)==1
+            position1=[CoordinatesFinalMice(countFrames,2*m-1),CoordinatesFinalMice(countFrames,2*m)];   
+             Frame=insertMarker(Frame,position1,'+','size', 6,'Color',C{m}); %add a marker when it is sleeping
+            
+        end
+        %% Add text and name of the mouse on the side
+        Frame=insertShape(Frame,'FilledCircle',[20,10+m*40,4],'LineWidth', 2,'Color',C{m});
+        Frame=insertText(Frame,[35,10+m*40],miceList{m});
+        
+      
+  end
+
+
+     writeVideo(writeRFID,Frame);
+
+ 
+ 
+ end
+ 
+ 
+   w=cd;  %current directory
+
+% 
+close( writeRFID)  
+              
+              
+              
+              
+              
+              
+    end
+end
+        
+end
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%End%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Auxiliary functionREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+% Create name of save folder and save directary
+function   [NameToSaveD,NameToSave]=Rename_Save_Directory(MovieFile,InitialTime,FinalTime)
+
+InitialTime=strrep(InitialTime,'''','');
+FinalTime=strrep(FinalTime,'''','');
+
+MovieFile=char(MovieFile);
+indexLetter=strfind(MovieFile,'.avi');
+
+InitialTime1=strrep(InitialTime,':','_');
+FinalTime1=strrep(FinalTime,':','_');
+
+NameToSaveD=strcat(MovieFile(1:indexLetter-1),'[',InitialTime1,'-',FinalTime1,']');
+
+NameToSave=strcat(MovieFile(1:indexLetter-1),'[',InitialTime,'-',FinalTime,']');
+
+end
+%% Find the date
+
+function DateExp=FindDate(MovieName)
+
+Index=strfind(char(MovieName),'-');
+
+DateExp=MovieName(1:Index-1);
+
+DateExp=strrep(DateExp,'.','/');
+DateExp=strcat('''',DateExp,'''');
+
+end
+%% Time difference between frames
+
+function ElapseTime=MeasureTimeDifference(TimeAfter, TimeBefore)
+
+TimeAfter=RemoveDoubleString(TimeAfter);
+TimeBefore=RemoveDoubleString(TimeBefore);
+
+%translate TimeExp to vector
+
+TimeVectorAfter=datevec(TimeAfter,'HH:MM:SS.FFF');
+TimeVectorBefore=datevec(TimeBefore,'HH:MM:SS.FFF');
+
+ElapseTime=abs(etime(TimeVectorAfter,TimeVectorBefore));% this is given in second
+
+end
+%% Remove double string from the time
+
+function TimeExp=RemoveDoubleString(TimeExp)
+
+    for count=1:size(TimeExp,1)
+       TimeExp(count,1)=strrep(TimeExp(count,1),'''','');
+    end
+
+end
+%% Function to decide reading all the movies or only one movie
+function Range=FindRangeReadMovies(MoviesToConsider,Movies_file)
+
+if strcmp(MoviesToConsider,'All') 
+    Range=1:size(Movies_file,1); 
+else
+    for i=1:size(Movies_file,1)
+
+        if strcmp(Movies_file(i).name,MoviesToConsider)==1
+            
+             Range=i;
+          
+        end
+
+    end
+end
+
+end
+
+%% Save the data
+
+function SaveMovie_Parameters(Initial_Directory,Locomotion,MovieName,OriginTimeOfMovie,FinalTimeOfMovie,FrameRate)
+
+%% Create the folders and the names of the files to save the data
+
+  [NameToSaveD,NameToSave]=Rename_Save_Directory(MovieName,OriginTimeOfMovie,FinalTimeOfMovie);
+                    A=strcat(Initial_Directory,'\',NameToSaveD);
+                       
+                    mkdir(char(A));
+                    B=strcat(Initial_Directory,'\',NameToSaveD,'\',NameToSaveD,'.avi');
+                    D=strcat(Initial_Directory,'\',NameToSaveD,'\',NameToSaveD,'WithSegmentation.avi');
+                    C=strcat(Initial_Directory,'\',NameToSaveD,'\',NameToSaveD,'.mat');
+
+
+%% Save video
+                   
+                    movefile('temp1.avi',char(B));
+                    movefile('temp2.avi',char(D));
+                   
+ 
+                    %% Save the data in a structure
+    
+                 save(char(C),'Locomotion');
+ 
+                 %% 
+                 
+
+
+
+end
+%% 
+
+function  MovieNameRFID=FindNameMovieChange(Name)
+
+I=strfind(Name,'.avi')
+MovieNameRFID=Name(1:I-1);
+
+%change [ in the name by (
+
+% MovieNameRFID=strrep(MovieNameRFID,'[','(');
+% MovieNameRFID=strrep(MovieNameRFID,']',')');
+
+end
+
+
+%% function for arranging data into matrix
+function  raw=Arrange_In_Matrix_RFIDData(time,date,micelist,coordinates,velocity)
+
+%headers
+raw(1,1)={'Date'};
+raw(1,2)={'Time'};
+
+
+
+%% 
+
+for count=1:length(micelist)
+    %% REMOVE NOT REAL VELOCITIES 
+    Indexaux=find(velocity(1:end,count)>500000);
+    velocity(Indexaux,count)=NaN;
+    
+   raw(1,3*count+1)=micelist(count); 
+   raw(2,3*count)={'x'};
+   raw(2,3*count+1)={'y'}; 
+   raw(2,3*count+2)={'velocity'}; 
+   
+   raw(3:size(coordinates,1)+2,3*count:3*count+1)=num2cell(coordinates(1:end,2*count-1:2*count)); 
+   raw(4:size(coordinates,1)+2,3*count+2)=num2cell(velocity(1:end,count));  
+end
+
+%data
+
+raw(3:size(date,1)+2,1)=date;
+raw(3:size(time,1)+2,2)=time;
+
+
+
+
+end
+
+%% Save cell array as csv
+function SaveAsCsvCell(filename,Cell_Array)
+
+
+cellwrite(filename,Cell_Array);
+
+end
+
+
+##### SOURCE END #####
+--></body></html>
